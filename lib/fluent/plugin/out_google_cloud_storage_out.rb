@@ -11,8 +11,6 @@ module Fluent
     Storage = Google::Apis::StorageV1
     ServiceAccountCredentials = Google::Auth::ServiceAccountCredentials
 
-    extend GoogleCloudStorageOut
-
     SUPPORTED_COMPRESS = {
       'gz' => :gz,
       'gzip' => :gzip,
