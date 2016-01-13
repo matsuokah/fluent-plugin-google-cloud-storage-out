@@ -6,7 +6,7 @@ require "fluent/log"
 require 'googleauth'
 require 'google/apis/storage_v1'
 
-require 'version'
+require 'fluent/plugin/version'
 
 class Fluent::GoogleCloudStorageOut < Fluent::TimeSlicedOutput
   Storage = Google::Apis::StorageV1
