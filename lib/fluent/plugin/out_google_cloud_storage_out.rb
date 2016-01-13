@@ -81,17 +81,14 @@ module Fluent
     end
 
     def prepare_client
-
-      storage = Storage::StorageService.new
+      @storage = Storage::StorageService.new
       scopes = [Storage::AUTH_CLOUD_PLATFORM, Storage::AUTH_DEVSTORAGE_FULL_CONTROL]
-      storage.authorization = ServiceAccountCredentials.make_creds(
+      @storage.authorization = ServiceAccountCredentials.make_creds(
         {
           :json_key_io => File.open(@service_account_json_key_path),
           :scope => scopes
         }
       )
-
-      @google_api_client = storage
     end
 
     def start
@@ -126,17 +123,12 @@ module Fluent
         io = StringIO.new(data)
       end
 
-      media = Google::APIClient::UploadIO.new(io, mimetype.content_type, File.basename(path))
-
-      @gogle_api_client.insert_object(@bucket_id, upload_source: io, name: path, content_type:mimetype_content_type)
-
+      @storage.insert_object(@bucket_id, upload_source: io, name: path, content_type:mimetype_content_type)
     end
 
     def write(chunk)
       gcs_path = path_format(chunk.key)
-
       send(gcs_path, chunk.read)
-
       gcs_path
     end
   end
