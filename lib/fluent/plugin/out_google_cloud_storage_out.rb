@@ -5,7 +5,6 @@ module Fluent
   require "fluent/mixin/config_placeholders"
   require 'googleauth'
   require 'google/apis/storage_v1'
-  require 'fluent/plugin/version'
   class GoogleCloudStorageOut < TimeSlicedOutput
     Plugin.register_output('google_cloud_storage_out', self)
 

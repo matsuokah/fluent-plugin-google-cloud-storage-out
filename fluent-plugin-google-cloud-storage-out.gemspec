@@ -1,11 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fluent/plugin/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-google-cloud-storage-out"
-  spec.version       = GoogleCloudStorageOut::VERSION
+  spec.version       = "0.1.5"
   spec.authors       = ["Hideki Matsuoka"]
   spec.email         = ["matsuoka.hide@gmail.com"]
 
