@@ -113,7 +113,7 @@ module Fluent
       mimetype = MIME::Types.type_for(path).first
 
       io = nil
-      if SUPPORTED_COMPRESS.include?(@compress)
+      if @compress
         io = StringIO.new("")
         writer = Zlib::GzipWriter.new(io)
         writer.write(data)
