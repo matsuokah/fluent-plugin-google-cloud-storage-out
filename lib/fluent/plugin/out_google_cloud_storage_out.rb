@@ -28,22 +28,22 @@ module Fluent
 
     include Mixin::ConfigPlaceholders
 
-    desc "The path of Service Account Json key."
+    #desc "The path of Service Account Json key."
     config_param :service_account_json_key_path, :string
 
-    desc "The bucket ID for destination for store."
+    #desc "The bucket ID for destination for store."
     config_param :bucket_id, :string
 
-    desc "The directory path for store."
+    #desc "The directory path for store."
     config_param :path, :string
 
-    desc "The format of the file content. The default is out_file"
+    #desc "The format of the file content. The default is out_file"
     config_param :format, :string, :default => 'out_file'
 
-    desc "The tag for out"
+    #desc "The tag for out"
     config_param :default_tag, :string, :default => 'tag_missing'
 
-    desc "Compress flushed file."
+    #desc "Compress flushed file."
     config_param :compress, :default => nil do |val|
       c = SUPPORTED_COMPRESS[val]
       unless c
