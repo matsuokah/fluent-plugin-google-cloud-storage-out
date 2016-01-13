@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   # runtime dependency
   spec.add_runtime_dependency "fluentd", ">= 0.10.60"
   spec.add_runtime_dependency "fluent-mixin-config-placeholders", ">= 0.3.0"
+  spec.add_runtime_dependency "googleauth", ">= 0.5"
   spec.add_runtime_dependency "google-api-client", "0.9.pre5"
   spec.add_runtime_dependency "mime-types", ">= 3.0"
 end
