@@ -86,7 +86,7 @@ module Fluent
       scopes = [Storage::AUTH_CLOUD_PLATFORM, Storage::AUTH_DEVSTORAGE_FULL_CONTROL]
       storage.authorization = ServiceAccountCredentials.make_creds(
         {
-          :json_key_io => File.open(@service_account_json_key),
+          :json_key_io => File.open(@service_account_json_key_path),
           :scope => scopes
         }
       )
