@@ -1,36 +1,64 @@
-# Fluent::Plugin::Google::Cloud::Storage::Out
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/fluent/plugin/google/cloud/storage/out`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
+# Fluent::GoogleCloudStorageOut
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'fluent-plugin-google-cloud-storage-out'
+$ td-agent-gem install fluent-plugin-google-cloud-storage-out
 ```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install fluent-plugin-google-cloud-storage-out
 
 ## Usage
 
-TODO: Write usage instructions here
+#### Sample Conf
+```
+<match *.json.log>
+    type google_cloud_storage_out
+    service_account_json_key_path /etc/td-agent/client_secrets.json
+    bucket_id access-log
+    path nginx/%Y_%m_%d/${hostname}_%H%M_${unique}
+    unique_strategy increment
+    format json
+    compress gzip
 
-## Development
+    buffer_type memory
+    buffer_chunk_limit 10m
+</match>
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+| parameter | description |
+| ---- | ---- |
+| service_account_json_key_path | Absolute Path to json key |
+| bucket_id | GCS Bucket ID to Store |
+| path | Path to save, if you use `/`, that will resolve to directory. And if path is including time format , then rotate by minum unit. Moreover, you can include ${unique}, that is to replace token with unique key|
+| unique_strategy | you can choice chunk_id, timestamp and inctement |
+| unique_format | Now, if you choiced `timestamp` to unique_strategy, then you can ccustom timestampformat. Default format is `%Y%m%d%H%M%S%L` |
+| format |  |
+| compress | gzip or nil |
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+#### Bucket
 
-## Contributing
+You shuould beforehand make a Bucket in GCS. This plugin will not support to create a Bucket automatically. Because I assume this plugin was used any servers.
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/fluent-plugin-google-cloud-storage-out. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+#### ServiceAccountKey(json)
 
+TODO
+
+#### Conf
+
+TODO
+
+#### Make Unique Strategy for avoid override object
+
+TODO
+
+###### Use The Chunk ID
+
+TODO
+
+###### Use The Timestamp
+
+TODO
+
+###### Use The Increment
+
+TODO
