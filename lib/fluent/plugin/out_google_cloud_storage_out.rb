@@ -191,7 +191,7 @@ module Fluent
         io = StringIO.new(data)
       end
 
-      @storage.insert_object(@bucket_id, upload_source: io, name: path, content_type:mimetype.content_type)
+      @storage.insert_object(@bucket_id, {name: path}, upload_source: io, content_type:mimetype.content_type)
     end
 
     def write(chunk)
