@@ -48,6 +48,9 @@ module Fluent
     #desc "The tag for out"
     config_param :default_tag, :string, :default => 'tag_missing'
 
+    #desc "Add log suffix for file"
+    config_param :add_log_suffix, :bool, :default => true
+
     #desc "The unique strategy for avoid override for same path"
     config_param :unique_strategy, :default => nil do |val|
       c = UNIQUE_STRATEGY[val]
@@ -136,37 +139,52 @@ module Fluent
       unique_id.unpack('C*').map{|x| x.to_s(16).rjust(2,'0')}.join('')
     end
 
-    def path_format_with_unique_strategy(path, strategy, chunk_key, chunk_unique)
-       case strategy
-       when nil
-         path
-       when :chunk_id
-         path.gsub(UNIQUE_PLACE_HOLDER, chunk_unique_id_to_str(chunk_unique))
-       when :increment
-         if @before_chunk_key
-           if @before_chunk_key == chunk_key
-             @samepath_counter += 1
-           else
-             @samepath_counter = 0
-           end
-         end
-         @before_chunk_key = chunk_key
-         path.gsub(UNIQUE_PLACE_HOLDER, "#{@samepath_counter}")
-       when :timestamp
-         path.gsub(UNIQUE_PLACE_HOLDER, Time.now.strftime(@unique_format))
-       end
+    def path_format_with_unique_strategy(path, strategy, chunk_key, chunk_unique, tag)
+      if tag
+        path = path.gsub('${tag}', tag)
+        hash = {}
+        tag.split('.').each_with_index do |part, i|
+          hash["${tag[#{i}]}"] = part
+        end
+        path = path.gsub(/\$\{(tag(?:\[\d+\])?)\}/, hash)
+      end
+      case strategy
+      when nil
+        path
+      when :chunk_id
+        path.gsub(UNIQUE_PLACE_HOLDER, chunk_unique_id_to_str(chunk_unique))
+      when :increment
+        if @before_chunk_key
+          if @before_chunk_key == chunk_key
+            @samepath_counter += 1
+          else
+            @samepath_counter = 0
+          end
+        end
+        @before_chunk_key = chunk_key
+        path.gsub(UNIQUE_PLACE_HOLDER, "#{@samepath_counter}")
+      when :timestamp
+        path.gsub(UNIQUE_PLACE_HOLDER, Time.now.strftime(@unique_format))
+      end
     end
 
     def path_format(chunk)
       # format from chunk key
       path = Time.strptime(chunk.key, @time_slice_format).strftime(@path)
 
+      if chunk.metadata
+        tag = chunk.metadata.tag
+      else
+        tag = nil
+      end
       # format for make unique
-      path = path_format_with_unique_strategy(path, @unique_strategy, chunk.key, chunk.unique_id)
+      path = path_format_with_unique_strategy(path, @unique_strategy, chunk.key, chunk.unique_id, tag)
 
-      # append .log
-      unless path.include?(".log")
-        path.concat(@path_suffix)
+      if @add_log_suffix
+        # append .log
+        unless path.include?(@path_suffix)
+          path.concat(@path_suffix)
+        end
       end
 
       # append .gz
@@ -178,7 +196,10 @@ module Fluent
       end
     end
 
-    def send(path, data)
+    def send(path, data = nil)
+      if data === nil
+        return
+      end
       mimetype = MIME::Types.type_for(path).first
       io = nil
       if @compress
